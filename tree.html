@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>fract tree</title>
+</head>
+
+<body onload='init()'>
+    <canvas id="canvas" style="background-color:black;"></canvas> 
+    <script>
+      var canvas, context;
+//主干与枝干的夹角
+var arg = Math.PI / 30;
+
+function drawTree(px, py, ang, scale, len) {
+  //引入偏移随机角度，改变一下形状
+   var rn = Math.random()*10 * (Math.PI / 180);
+
+   var x = Math.floor(scale*len*Math.cos(ang));
+   var y = Math.floor(scale*len*Math.sin(ang));
+
+   //设置线条颜色
+   context.strokeStyle = 'white';
+   // 设置线条的宽度
+   context.lineWidth = 1;
+   // 绘制直线
+   context.beginPath();
+   // 起点
+   context.moveTo(px, py);
+   // 终点
+   context.lineTo(px+x, py-y);
+   context.closePath();
+   context.stroke();
+
+   //终止递归
+   if (scale*len<10)
+          return;
+
+   //递归画出左右分枝
+    drawTree(px + x, py - y, ang - arg + rn, scale, scale*len);
+    drawTree(px + x, py - y, ang + arg + rn, scale, scale*len);
+
+}
+
+function init() {
+   canvas = document.getElementById('canvas');
+   canvas.width = 1000;
+   canvas.height = 400;
+
+   // 拿到上下文
+   context = canvas.getContext('2d');
+   // 画分形树
+   drawTree(300,300,Math.PI/2,0.82,75);
+}
+           </script>
+</body>
+
+</html>

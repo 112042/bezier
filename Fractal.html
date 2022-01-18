@@ -1,0 +1,291 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> kouch curve</title>
+   
+</head>
+<body>
+        <canvas id="canvas" width="1000" height="1000" style="border:1px solid black"></canvas>
+        <br>
+        <label >level:</label>
+        <input id="slide" type="number" min="0" max="6"></input>
+        <label >polygon:</label>
+        <input id="polygon" type="number" min="0" max="6"></input>
+        <br>
+        <p>請隨意的在畫布上點兩點</p>
+    
+	<script>
+    
+var clicks = 0;
+var lastClick = [0, 0];
+
+var canvas=document.getElementById('canvas');
+var ctx=canvas.getContext('2d');
+canvas.addEventListener('click', drawLine, false);
+var polygon=document.getElementById("polygon");
+var slide = document.getElementById("slide");
+
+
+
+function getCursorPosition(e) {
+    var x;
+    var y;
+
+    if (e.pageX != undefined && e.pageY != undefined) {
+        x = e.pageX;
+        y = e.pageY;
+    } else {
+        x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    }
+    
+    return [x, y];
+}
+
+function drawLine(e) {
+   
+
+    x = getCursorPosition(e)[0] - this.offsetLeft;
+    y = getCursorPosition(e)[1] - this.offsetTop;
+   
+    
+    if (clicks != 1) {
+      
+        clicks++;
+    } else {
+
+        if(polygon.value==1||polygon.value==0||polygon.value==2){
+
+            ctx.beginPath();
+            ctx.arc(lastClick[0],lastClick[1],5,0,2*Math.PI);
+            ctx.fillStyle = "red";
+            ctx.fill();
+            
+
+            ctx.beginPath();
+            ctx.arc(x,y,5,0,2*Math.PI);
+            ctx.fillStyle = "red";
+            ctx.fill();
+           
+            
+            drawfractal(lastClick[0],lastClick[1],x,y);   
+        }else if(polygon.value==3){
+            
+            ctx.beginPath();
+            ctx.arc(lastClick[0],lastClick[1],5,0,2*Math.PI);
+            ctx.fillStyle = "red";
+            ctx.fill();
+           
+
+            ctx.beginPath();
+            ctx.arc(x,y,5,0,2*Math.PI);
+            ctx.fillStyle = "red";
+            ctx.fill();
+           koch([lastClick[0],lastClick[1]],[x,y],slide.value);
+   
+  }else if(polygon.value==4){
+    ctx.beginPath();
+            ctx.arc(lastClick[0],lastClick[1],5,0,2*Math.PI);
+            ctx.fillStyle = "red";
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(x,y,5,0,2*Math.PI);
+            ctx.fillStyle = "red";
+            ctx.fill();
+    squarekoch([lastClick[0],lastClick[1]],[x,y],slide.value);
+    
+  }else if(polygon.value==5){
+    ctx.beginPath();
+            ctx.arc(lastClick[0],lastClick[1],5,0,2*Math.PI);
+            ctx.fillStyle = "red";
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(x,y,5,0,2*Math.PI);
+            ctx.fillStyle = "red";
+            ctx.fill();
+    pentagonkoch([lastClick[0],lastClick[1]],[x,y],slide.value);
+    
+  }else if(polygon.value==6){
+    ctx.beginPath();
+            ctx.arc(lastClick[0],lastClick[1],5,0,2*Math.PI);
+            ctx.fillStyle = "red";
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(x,y,5,0,2*Math.PI);
+            ctx.fillStyle = "red";
+            ctx.fill();
+    hexagonkoch([lastClick[0],lastClick[1]],[x,y],slide.value);
+  }
+    clicks = 0;
+   
+}
+lastClick = [x, y];
+}
+function drawfractal(x1,y1,x2,y2)
+{
+  
+  ctx.beginPath();
+    ctx.moveTo(x1, y1); 
+    ctx.lineTo(x2, y2);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#000000';
+    ctx.stroke();
+    ctx.closePath();  
+     
+}  
+function koch(start,end,iteration) {
+  var x1 = (end[0] - start[0] )*1/3 + start[0];
+  var y1 = (end[1] -start[1] )*1/3 + start[1];
+  var x2 = (end[0] - start[0])*2/3 + start[0];
+  var y2 = (end[1] - start[1])*2/3 + start[1];
+  var x3 = x1 + (x2 - x1) * Math.cos(-Math.PI/3) - (y2 - y1) * Math.sin(-Math.PI/3),
+      y3 = y1 + (y2 - y1) * Math.cos(-Math.PI/3) + (x2 - x1) * Math.sin(-Math.PI/3);
+
+var z=iteration-1;
+  if(z < 0){
+    ctx.beginPath();
+    ctx.moveTo(start[0],start[1]);
+    ctx.lineTo(end[0],end[1]);
+    ctx.closePath();
+    ctx.stroke();
+
+  }else if(z == 0){
+    drawfractal(start[0],start[1],x1,y1);
+    drawfractal(x1,y1,x3,y3);
+    drawfractal(x2,y2,x3,y3);
+    drawfractal(x2,y2,end[0],end[1]);
+
+  } else{
+   
+  koch([start[0],start[1]],[x1,y1],iteration - 1);
+    koch([x1,y1],[x3,y3],iteration - 1);
+    koch([x3,y3],[x2,y2],iteration - 1);
+    koch([x2,y2],[end[0],end[1]],iteration - 1);
+} 
+}  
+function squarekoch(start,end,iteration) {
+  var x1 = (end[0] - start[0] )*1/3 + start[0];
+  var y1 = (end[1] -start[1] )*1/3 + start[1];
+  var x2 = (end[0] - start[0])*2/3 + start[0];
+  var y2 = (end[1] - start[1])*2/3 + start[1];
+  var x3 = x1 + (x2 - x1) * Math.cos(-Math.PI/2) - (y2 - y1) * Math.sin(-Math.PI/2),
+      y3 = y1 + (y2 - y1) * Math.cos(-Math.PI/2) + (x2 - x1) * Math.sin(-Math.PI/2);
+  var x4 = x3 + (x2 - x1) * Math.cos(-Math.PI*2) - (y2 - y1) * Math.sin(-Math.PI*2),
+      y4 = y3 + (y2 - y1) * Math.cos(-Math.PI*2) + (x2 - x1) * Math.sin(-Math.PI*2);
+
+var z=iteration-1;
+  if(z < 0){
+    ctx.beginPath();
+    ctx.moveTo(start[0],start[1]);
+    ctx.lineTo(end[0],end[1]);
+    ctx.closePath();
+    ctx.stroke();
+
+  }else if(z == 0){
+    drawfractal(start[0],start[1],x1,y1);
+    drawfractal(x1,y1,x3,y3);
+    drawfractal(x3,y3,x4,y4);
+    drawfractal(x4,y4,x2,y2);
+    drawfractal(x2,y2,end[0],end[1]);
+  } else{
+   squarekoch([start[0],start[1]],[x1,y1],iteration - 1);
+  squarekoch([x1,y1],[x3,y3],iteration - 1);
+  squarekoch([x3,y3],[x4,y4],iteration - 1);
+  squarekoch([x4,y4],[x2,y2],iteration - 1);
+  squarekoch([x2,y2],[end[0],end[1]],iteration - 1);
+} 
+}
+function pentagonkoch(start,end,iteration) {
+  var angle=((5-2)*Math.PI)/5;
+  var nagtive_angle=Math.PI-angle;
+  var transfer_angle=angle-nagtive_angle;
+  var x1 = (end[0] - start[0] )*1/3 + start[0];
+  var y1 = (end[1] -start[1] )*1/3 + start[1];
+  var x2 = (end[0] - start[0])*2/3 + start[0];
+  var y2 = (end[1] - start[1])*2/3 + start[1];
+  var x3 = x1 + (x2 - x1) * Math.cos(-angle) - (y2 - y1) * Math.sin(-angle),
+      y3 = y1 + (y2 - y1) * Math.cos(-angle) + (x2 - x1) * Math.sin(-angle);
+  var x4 = x2 + (x2 - x1) * Math.cos(-nagtive_angle) - (y2 - y1) * Math.sin(-nagtive_angle),
+      y4 = y2 + (y2 - y1) * Math.cos(-nagtive_angle) + (x2 - x1) * Math.sin(-nagtive_angle);
+  var x5 = x3 + (x2 - x1) * Math.cos(-transfer_angle) - (y2 - y1) * Math.sin(-transfer_angle), 
+      y5 = y3 + (y2 - y1) * Math.cos(-transfer_angle) + (x2 - x1) * Math.sin(-transfer_angle) ;
+
+var z=iteration-1;
+  if(z < 0){
+    ctx.beginPath();
+    ctx.moveTo(start[0],start[1]);
+    ctx.lineTo(end[0],end[1]);
+    ctx.closePath();
+    ctx.stroke();
+
+  }else if(z == 0){
+    drawfractal(start[0],start[1],x1,y1);
+    drawfractal(x1,y1,x3,y3);
+    drawfractal(x3,y3,x5,y5);
+    drawfractal(x5,y5,x4,y4);
+    drawfractal(x4,y4,x2,y2);
+    drawfractal(x2,y2,end[0],end[1]);
+  } else{
+  pentagonkoch([start[0],start[1]],[x1,y1],iteration - 1);
+  pentagonkoch([x1,y1],[x3,y3],iteration - 1);
+  pentagonkoch([x3,y3],[x5,y5],iteration - 1);
+  pentagonkoch([x5,y5],[x4,y4],iteration - 1);
+  pentagonkoch([x4,y4],[x2,y2],iteration - 1);
+  pentagonkoch([x2,y2],[end[0],end[1]],iteration - 1);
+} 
+}
+function hexagonkoch(start,end,iteration) {
+  var angle=((6-2)*Math.PI)/6;
+  var nagtive_angle=Math.PI-angle;
+  var transfer_angle=angle-nagtive_angle;
+  var x1 = (end[0] - start[0] )*1/3 + start[0];
+  var y1 = (end[1] -start[1] )*1/3 + start[1];
+  var x2 = (end[0] - start[0])*2/3 + start[0];
+  var y2 = (end[1] - start[1])*2/3 + start[1];
+  
+var  x3 = x1 + (x2 - x1) * Math.cos(-angle) - (y2 - y1) * Math.sin(-angle),
+      y3 = y1 + (y2 - y1) * Math.cos(-angle) + (x2 - x1) * Math.sin(-angle);
+ 
+var x4 = x3 + (x2 - x1) * Math.cos(-transfer_angle) - (y2 - y1) * Math.sin(-transfer_angle), 
+    y4 = y3 + (y2 - y1) * Math.cos(-transfer_angle) + (x2 - x1) * Math.sin(-transfer_angle) ;
+var x5 = x4 + (x2 - x1) * Math.cos(-Math.PI*2) - (y2 - y1) * Math.sin(-Math.PI*2), 
+    y5 = y4 + (y2 - y1) * Math.cos(-Math.PI*2) + (x2 - x1) * Math.sin(-Math.PI*2) ;
+var x6 = x5 + (x2 - x1) * Math.cos(transfer_angle) - (y2 - y1) * Math.sin(transfer_angle), 
+    y6 = y5 + (y2 - y1) * Math.cos(transfer_angle) + (x2 - x1) * Math.sin(transfer_angle) ;
+      
+var z=iteration-1;
+  if(z < 0){
+    ctx.beginPath();
+    ctx.moveTo(start[0],start[1]);
+    ctx.lineTo(end[0],end[1]);
+    ctx.closePath();
+    ctx.stroke();
+
+  }else if(z == 0){
+    drawfractal(start[0],start[1],x1,y1);
+    drawfractal(x1,y1,x3,y3);
+    drawfractal(x3,y3,x4,y4);
+    drawfractal(x4,y4,x5,y5);
+    drawfractal(x5,y5,x6,y6);
+    drawfractal(x6,y6,x2,y2);
+    drawfractal(x2,y2,end[0],end[1]);
+  } else{
+    hexagonkoch([start[0],start[1]],[x1,y1],iteration - 1);
+  hexagonkoch([x1,y1],[x3,y3],iteration - 1);
+  hexagonkoch([x3,y3],[x4,y4],iteration - 1);
+  hexagonkoch([x4,y4],[x5,y5],iteration - 1);
+  hexagonkoch([x5,y5],[x6,y6],iteration - 1);
+  hexagonkoch([x6,y6],[x2,y2],iteration - 1);
+  hexagonkoch([x2,y2],[end[0],end[1]],iteration - 1);
+} 
+}
+	</script>
+</body>
+</html>

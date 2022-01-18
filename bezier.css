@@ -1,0 +1,15 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+#canvas {
+    border: 1px solid black;
+    background-color: #f8f8f8;
+    margin: 10px;
+    display: block;
+    
+}
+.btn {
+    border: 1px solid black;
+    margin: 10px;
+}
